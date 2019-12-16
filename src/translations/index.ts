@@ -11,6 +11,7 @@ const messages = {
 
 const i18n = new VueI18n({
 	fallbackLocale: 'en',
+	locale: 'en',
 	messages
 });
 
