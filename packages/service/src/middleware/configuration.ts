@@ -18,7 +18,7 @@ const loadConfiguration = () => {
 
 loadConfiguration();
 
-export const getClaims = async (): Promise<Array<any>> => {
+export const getClaims = async (): Promise<any> => {
 	if (!claims) await loadClaims();
 	return claims;
 };
