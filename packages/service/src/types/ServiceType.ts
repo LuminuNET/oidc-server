@@ -1,7 +1,7 @@
 type TService = {
-	name: string;
-	domain: string;
-	callback_url: string;
+	name: String;
+	domain: String;
+	callback_url: String;
 };
 
 export default TService;
