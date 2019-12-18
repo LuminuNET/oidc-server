@@ -24,5 +24,7 @@
 			"rank"
 		],
 		"email": ["email", "email_verified"]
-	}
+	},
+	"basic_scopes": ["profile", "email"],
+	"advanced_scopes": []
 }
