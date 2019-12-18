@@ -1,20 +1,15 @@
 import { Request, Response, NextFunction } from 'express';
 import { HTTP400Error } from '../utils/httpErrors';
 import TService from '../types/ServiceType';
+import { getServices } from './configuration';
 
 let services: Array<TService>;
 
 const loadServices = async () => {
-	if (!services) {
-		services = await import('../config/services.json' as 'json');
-	}
+	services = await getServices();
 };
 
 loadServices();
-
-export const getServices = (): Array<TService> => {
-	return services;
-};
 
 export const checkExistsOidcQueries = (
 	req: Request,
