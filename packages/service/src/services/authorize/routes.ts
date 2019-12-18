@@ -1,15 +1,28 @@
 import { Request, Response } from 'express';
-import { checkOidcQueries } from '../../middleware/checks';
+import {
+	checkExistsOidcQueries,
+	verifyOidcQueries
+} from '../../middleware/checks';
+import authorize from './authorize';
+import TAuthenticationResponse from '../../types/AuthenticationResponseType';
 
 export default [
 	{
 		path: '/api/v1/authorize',
 		method: 'get',
 		handler: [
-			checkOidcQueries,
+			checkExistsOidcQueries,
+			verifyOidcQueries,
 			async ({ query }: Request, res: Response) => {
-				const result = { success: true };
-				res.status(200).send(result);
+				const result: TAuthenticationResponse = await authorize(
+					query.response_type,
+					query.client_id,
+					query.redirect_uri,
+					query.scope,
+					query.state,
+					query.nonce
+				);
+				res.status(302).send(result);
 			}
 		]
 	}
