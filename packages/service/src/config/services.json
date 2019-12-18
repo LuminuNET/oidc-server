@@ -1,0 +1,7 @@
+{
+	"chat.luminu": {
+		"name": "Luminu Chat",
+		"domain": "chat.luminu.net",
+		"callback_url": "https://chat.luminu.net/cb"
+	}
+}
