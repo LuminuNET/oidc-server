@@ -3,7 +3,7 @@
 	"version": "1.0.0",
 	"description": "",
 	"scripts": {
-		"start": "concurrently -n frontend \"cd ./packages/frontend && npm run serve\""
+		"start": "concurrently -n frontend,service \"cd ./packages/frontend && npm run serve\" \"cd ./packages/service && npm run dev\""
 	},
 	"dependencies": {
 		"concurrently": "^5.0.0"
