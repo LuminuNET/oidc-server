@@ -1,5 +1,5 @@
 {
-	"name": "auth-spa",
+	"name": "@luminu/oidc-service-frontend",
 	"version": "0.1.0",
 	"private": true,
 	"scripts": {
