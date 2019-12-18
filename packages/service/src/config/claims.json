@@ -1,0 +1,30 @@
+{
+	"claims_supported": [
+		"nickname",
+		"picture",
+		"website",
+		"gender",
+		"birthdate",
+		"locale",
+		"updated_at",
+		"email",
+		"email_verified",
+		"rank"
+	],
+	"scopes_supported": ["openid", "profile", "email"],
+	"scopes_implement": {
+		"profile": [
+			"nickname",
+			"picture",
+			"website",
+			"gender",
+			"birthdate",
+			"locale",
+			"updated_at",
+			"rank"
+		],
+		"email": ["email", "email_verified"]
+	},
+	"basic_scopes": ["profile", "email"],
+	"advanced_scopes": []
+}

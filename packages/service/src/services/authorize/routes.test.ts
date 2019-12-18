@@ -81,4 +81,18 @@ describe('routes', () => {
 		);
 		expect(response.status).toEqual(302);
 	});
+
+	test('query missing', async () => {
+		const response = await request(router).get(
+			'/api/v1/information?client_id=&scope=openid profile'
+		);
+		expect(response.status).toEqual(400);
+	});
+
+	test('valid requests', async () => {
+		const response = await request(router).get(
+			'/api/v1/information?client_id=chat.luminu&scope=openid profile'
+		);
+		expect(response.status).toEqual(200);
+	});
 });

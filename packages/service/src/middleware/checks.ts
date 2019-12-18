@@ -1,33 +1,28 @@
 import { Request, Response, NextFunction } from 'express';
 import { HTTP400Error } from '../utils/httpErrors';
 import TService from '../types/ServiceType';
+import { getServices } from './configuration';
 
 let services: Array<TService>;
 
 const loadServices = async () => {
-	if (!services) {
-		services = await import('../config/services.json' as 'json');
-	}
+	services = await getServices();
 };
 
 loadServices();
 
-export const getServices = (): Array<TService> => {
-	return services;
-};
-
 export const checkExistsOidcQueries = (
-	req: Request,
+	{ query }: Request,
 	res: Response,
 	next: NextFunction
 ) => {
 	if (
-		!req.query.response_type ||
-		!req.query.client_id ||
-		!req.query.redirect_uri ||
-		!req.query.scope ||
-		!req.query.nonce ||
-		!req.query.state
+		!query.response_type ||
+		!query.client_id ||
+		!query.redirect_uri ||
+		!query.scope ||
+		!query.nonce ||
+		!query.state
 	) {
 		throw new HTTP400Error('Missing oidc authorize parameter');
 	} else {
@@ -35,13 +30,44 @@ export const checkExistsOidcQueries = (
 	}
 };
 
+export const verifyClientId = (
+	{ query }: Request,
+	res: Response,
+	next: NextFunction
+) => {
+	// Check if service exists
+	if (!services[query.client_id]) {
+		throw new HTTP400Error('Client not found');
+	}
+
+	next();
+};
+
+export const verifyScope = (
+	{ query }: Request,
+	res: Response,
+	next: NextFunction
+) => {
+	// Check if scope is valid
+	const scopes: Array<String> = query.scope.split(' ');
+	if (scopes.indexOf('openid') === -1) {
+		throw new HTTP400Error('OpenID not used');
+	}
+
+	if (scopes.length === 1) {
+		throw new HTTP400Error('No permissions requested');
+	}
+
+	next();
+};
+
 export const verifyOidcQueries = (
-	req: Request,
+	{ query }: Request,
 	res: Response,
 	next: NextFunction
 ) => {
 	// Check if valid implicit response types are set in response_type query
-	const responseTypes: Array<String> = req.query.response_type.split(' ');
+	const responseTypes: Array<String> = query.response_type.split(' ');
 
 	switch (responseTypes.length) {
 		case 1:
@@ -59,26 +85,23 @@ export const verifyOidcQueries = (
 			throw new HTTP400Error('Too many response types set');
 	}
 
-	// Check if service exists
-	if (!services[req.query.client_id]) {
-		throw new HTTP400Error('Client not found');
-	}
-
 	// Check if the redirect uri is valid
-	if (services[req.query.client_id].callback_url !== req.query.redirect_uri) {
+	if (services[query.client_id].callback_url !== query.redirect_uri) {
 		throw new HTTP400Error('Redirect Uri invalid');
-	}
-
-	// Check if scope is valid
-	const scopes: Array<String> = req.query.scope.split(' ');
-	if (scopes.indexOf('openid') === -1) {
-		throw new HTTP400Error('OpenID not used');
-	}
-
-	if (scopes.length === 1) {
-		throw new HTTP400Error('No permissions requested');
 	}
 
 	// End validation by calling next function
 	next();
+};
+
+export const checkExistsInformationQueries = (
+	{ query }: Request,
+	res: Response,
+	next: NextFunction
+) => {
+	if (!query.client_id || !query.scope) {
+		throw new HTTP400Error('Missing information parameters');
+	} else {
+		next();
+	}
 };
