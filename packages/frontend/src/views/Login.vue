@@ -2,31 +2,17 @@
 	<div class="login">
 		<div class="container">
 			<lm-card class="login-card">
-				<p class="title">
-					{{ $t('navigation.login') }}
-				</p>
+				<p class="title">{{ $t('navigation.login') }}</p>
 				<div class="seperator">
 					<hr />
 				</div>
-				<label for="user"
-					>{{ $t('login.username') }} / {{ $t('login.email') }}</label
-				><br />
-				<input
-					@keydown.enter="login"
-					v-model="user"
-					type="text"
-					name="user"
-					id="user"
-				/><br />
-				<label for="password">{{ $t('login.password') }}</label
-				><br />
-				<input
-					@keydown.enter="login"
-					v-model="password"
-					type="password"
-					name="password"
-					id="password"
-				/>
+				<label for="user">{{ $t('login.username') }} / {{ $t('login.email') }}</label>
+				<br />
+				<input @keydown.enter="login" v-model="user" type="text" name="user" id="user" />
+				<br />
+				<label for="password">{{ $t('login.password') }}</label>
+				<br />
+				<input @keydown.enter="login" v-model="password" type="password" name="password" id="password" />
 				<div style="margin-bottom: 20px;" class="seperator">
 					<hr />
 				</div>
@@ -41,31 +27,25 @@
 					href="https://luminu.net/lost-password/"
 					target="_blank"
 					class="help__item"
-					>Forgot your password</a
-				>
-				<a
-					href="https://luminu.net/register"
-					target="_blank"
-					class="help__item"
-					>Register</a
-				>
+				>Forgot your password</a>
+				<a href="https://luminu.net/register" target="_blank" class="help__item">Register</a>
 			</div>
 		</div>
 	</div>
 </template>
 
 <script lang="ts">
-import Vue from 'vue';
-import { LmCard } from '@luminu/components';
+import Vue from "vue";
+import { LmCard } from "@luminu/components";
 
 export default Vue.extend({
-	name: 'login',
+	name: "login",
 	components: {
 		LmCard
 	},
 	data: () => ({
-		user: '',
-		password: ''
+		user: "",
+		password: ""
 	}),
 	methods: {
 		async login(): Promise<void> {}
@@ -74,7 +54,7 @@ export default Vue.extend({
 </script>
 
 <style lang="scss" scoped>
-@import '~@luminu/ui-kit/scss/_variables.scss';
+@import "~@luminu/ui-kit/scss/_variables.scss";
 
 .login {
 	.container {
@@ -129,7 +109,7 @@ export default Vue.extend({
 				outline: none;
 				font-size: 14px;
 				text-indent: 5px;
-				box-shadow: 0px 0px 0px 2px rgba($color: $lmColor3, $alpha: 0.7);
+				box-shadow: 0px 0px 0px 2px rgba($color: $lmColor3, $alpha: 0.5);
 			}
 		}
 
