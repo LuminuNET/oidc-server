@@ -12,6 +12,7 @@
 			]"
 		/>
 		<router-view class="view" />
+		<lm-custom-footer />
 	</div>
 </template>
 
@@ -21,14 +22,16 @@ import { mapActions, mapGetters } from "vuex";
 
 import { LmHeader } from "@luminu/components";
 import LmCustomStickyHeader from "@/components/layout/CustomStickyHeader.vue";
+import LmCustomFooter from "@/components/layout/CustomFooter.vue";
 
-import { ENTER_OIDC } from "@/store/actions.type";
-import { GET_OIDC, GET_VALIDITY } from "@/store/getters.type";
+import { ENTER_OIDC } from "./store/actions.type";
+import { GET_OIDC, GET_VALIDITY } from "./store/getters.type";
 
 export default Vue.extend({
 	components: {
 		LmCustomStickyHeader,
-		LmHeader
+		LmHeader,
+		LmCustomFooter
 	},
 	methods: {
 		...mapActions([ENTER_OIDC]),
@@ -40,15 +43,18 @@ export default Vue.extend({
 		console.log(this[GET_OIDC]());
 		// eslint-disable-next-line no-console
 		console.log(this[GET_VALIDITY]());
-	}
+	},
+	data: () => ({
+		partners: [
+			{
+				to: "https://cytooxien.de",
+				image: require("@/assets/cytooxien_banner.png")
+			}
+		]
+	})
 });
 </script>
 
 <style lang="scss">
-@import "~@luminu/ui-kit/scss/_globals.scss";
-
-.view {
-	// leave in for development purposes only
-	margin-bottom: 500px;
-}
+@import "~@luminu/core/scss/_globals.scss";
 </style>
