@@ -9,7 +9,8 @@
 		"test:unit": "vue-cli-service test:unit"
 	},
 	"dependencies": {
-		"@luminu/components": "*",
+		"@luminu/components": "^0.2.8",
+		"@luminu/core": "^0.1.1",
 		"@luminu/types": "^1.1.0",
 		"@luminu/ui-kit": "^0.2.0",
 		"core-js": "^3.4.3",
