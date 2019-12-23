@@ -3,12 +3,8 @@
 		<div class="container">
 			<lm-card class="allow-permissions">
 				<p class="title">Luminu Chat,</p>
-				<p class="description">
-					{{ $t('modal.wantsAccessFollowingPartsFromYourAccount') }}
-				</p>
-				<div class="seperator">
-					<hr />
-				</div>
+				<p class="description">{{ $t('modal.wantsAccessFollowingPartsFromYourAccount') }}</p>
+				<lm-seperator :mtop="15" :mbottom="13" />
 				<div class="permissions">
 					<div class="permission--basic">
 						<p class="permission">Basic Profile</p>
@@ -18,9 +14,7 @@
 						<p class="permission">Modify Email</p>
 					</div>
 				</div>
-				<div class="seperator">
-					<hr />
-				</div>
+				<lm-seperator :mtop="15" :mbottom="13" />
 				<div class="btn-group">
 					<div class="btn error">
 						<p class="btn__content">{{ $t('modal.deny') }}</p>
@@ -35,19 +29,20 @@
 </template>
 
 <script lang="ts">
-import Vue from 'vue';
-import { LmCard } from '@luminu/components';
+import Vue from "vue";
+import { LmCard, LmSeperator } from "@luminu/components";
 
 export default Vue.extend({
-	name: 'home',
+	name: "home",
 	components: {
-		LmCard
+		LmCard,
+		LmSeperator
 	}
 });
 </script>
 
 <style lang="scss" scoped>
-@import '~@luminu/ui-kit/scss/_variables.scss';
+@import "~@luminu/core/scss/_variables.scss";
 
 .home {
 	.allow-permissions {
@@ -67,7 +62,8 @@ export default Vue.extend({
 				margin-bottom: 10px;
 				background-color: $background;
 				border-radius: 5px;
-				padding-bottom: 2px;
+				padding-top: 4px;
+				padding-bottom: 5px;
 				box-shadow: 0px 1px 1px rgba($color: #000000, $alpha: 0.2);
 				color: #333;
 
