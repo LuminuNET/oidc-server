@@ -1,15 +1,17 @@
 import { Request, Response } from 'express';
-import {
-	checkExistsOidcQueries,
-	verifyOidcQueries,
-	checkExistsInformationQueries,
-	verifyScope,
-	verifyClientId
-} from '../../middleware/checks';
 import authorize from './authorize';
 import TAuthenticationResponse from '../../types/AuthenticationResponseType';
 import TInformationResponse from '../../types/InformationResponseType';
 import information from './information';
+import {
+	checkExistsOidcQueries,
+	verifyOidcQueries
+} from '../../middleware/checks/authorize/authorizeChecks';
+import {
+	verifyClientId,
+	verifyScope
+} from '../../middleware/checks/authorize/globalChecks';
+import { checkExistsInformationQueries } from '../../middleware/checks/authorize/informationChecks';
 
 export default [
 	{
