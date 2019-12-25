@@ -17,6 +17,10 @@ const en = {
 		email: 'Email',
 		password: 'Password'
 	},
+	response: {
+		noUsernameSpecified: 'No username was specified.',
+		noPasswordSpecified: 'No password was specified.'
+	},
 	footer
 };
 

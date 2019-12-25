@@ -16,12 +16,8 @@
 				</div>
 				<lm-seperator :mtop="15" :mbottom="13" />
 				<div class="btn-group">
-					<div class="btn error">
-						<p class="btn__content">{{ $t('modal.deny') }}</p>
-					</div>
-					<div class="btn success">
-						<p class="btn__content">{{ $t('modal.accept') }}</p>
-					</div>
+					<lm-button :text="$t('modal.deny')" type="error" />
+					<lm-button :text="$t('modal.accept')" type="success" />
 				</div>
 			</lm-card>
 		</div>
@@ -30,13 +26,14 @@
 
 <script lang="ts">
 import Vue from "vue";
-import { LmCard, LmSeperator } from "@luminu/components";
+import { LmCard, LmSeperator, LmButton } from "@luminu/components";
 
 export default Vue.extend({
 	name: "home",
 	components: {
 		LmCard,
-		LmSeperator
+		LmSeperator,
+		LmButton
 	}
 });
 </script>
