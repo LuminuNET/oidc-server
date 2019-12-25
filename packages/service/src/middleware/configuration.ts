@@ -23,7 +23,7 @@ export const getClaims = async (): Promise<any> => {
 	return claims;
 };
 
-export const getServices = async (): Promise<Array<TService>> => {
+export const getServices = async (): Promise<TService[]> => {
 	if (!services) await loadServices();
 	return services;
 };

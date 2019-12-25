@@ -1,7 +1,7 @@
 import { Request, Response, NextFunction } from 'express';
-import { HTTP400Error } from '../utils/httpErrors';
-import TService from '../types/ServiceType';
-import { getServices } from './configuration';
+import TService from '../../../types/ServiceType';
+import { getServices } from '../../configuration';
+import { HTTP400Error } from '../../../utils/httpErrors';
 
 let services: Array<TService>;
 
@@ -28,37 +28,6 @@ export const checkExistsOidcQueries = (
 	} else {
 		next();
 	}
-};
-
-export const verifyClientId = (
-	{ query }: Request,
-	res: Response,
-	next: NextFunction
-) => {
-	// Check if service exists
-	if (!services[query.client_id]) {
-		throw new HTTP400Error('Client not found');
-	}
-
-	next();
-};
-
-export const verifyScope = (
-	{ query }: Request,
-	res: Response,
-	next: NextFunction
-) => {
-	// Check if scope is valid
-	const scopes: Array<String> = query.scope.split(' ');
-	if (scopes.indexOf('openid') === -1) {
-		throw new HTTP400Error('OpenID not used');
-	}
-
-	if (scopes.length === 1) {
-		throw new HTTP400Error('No permissions requested');
-	}
-
-	next();
 };
 
 export const verifyOidcQueries = (
@@ -92,16 +61,4 @@ export const verifyOidcQueries = (
 
 	// End validation by calling next function
 	next();
-};
-
-export const checkExistsInformationQueries = (
-	{ query }: Request,
-	res: Response,
-	next: NextFunction
-) => {
-	if (!query.client_id || !query.scope) {
-		throw new HTTP400Error('Missing information parameters');
-	} else {
-		next();
-	}
 };
