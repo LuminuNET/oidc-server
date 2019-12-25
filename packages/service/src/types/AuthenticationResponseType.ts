@@ -1,9 +1,9 @@
 type TAuthenticationResponse = {
-	id_token: String;
-	expires_in: Number;
-	state: String;
-	access_token?: String;
-	token_type?: String;
+	id_token: string;
+	expires_in: number;
+	state: string;
+	access_token?: string;
+	token_type?: string;
 };
 
 export default TAuthenticationResponse;

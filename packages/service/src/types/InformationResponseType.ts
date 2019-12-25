@@ -1,7 +1,7 @@
 type TInformationResponse = {
-	name: String;
-	permission_basic: Array<String>;
-	permission_advanced: Array<String>;
+	name: string;
+	permission_basic: String[];
+	permission_advanced: String[];
 };
 
 export default TInformationResponse;
