@@ -1,25 +1,27 @@
 <template>
 	<div class="login">
+		<lm-notification :message="$t('response.' + notification.message)" :active="notification.active" />
 		<div class="container">
 			<lm-card class="login-card">
 				<p class="title">{{ $t('navigation.login') }}</p>
-				<div class="seperator">
-					<hr />
-				</div>
+				<lm-seperator :mbottom="10" />
 				<label for="user">{{ $t('login.username') }} / {{ $t('login.email') }}</label>
 				<br />
-				<input @keydown.enter="login" v-model="user" type="text" name="user" id="user" />
+				<input maxlength="64" @keydown.enter="login" v-model="user" type="text" name="user" id="user" />
 				<br />
 				<label for="password">{{ $t('login.password') }}</label>
 				<br />
-				<input @keydown.enter="login" v-model="password" type="password" name="password" id="password" />
-				<div style="margin-bottom: 20px;" class="seperator">
-					<hr />
-				</div>
+				<input
+					maxlength="256"
+					@keydown.enter="login"
+					v-model="password"
+					type="password"
+					name="password"
+					id="password"
+				/>
+				<lm-seperator :mbottom="14" />
 				<div class="btn-group">
-					<div @click="login" class="btn success">
-						<p class="btn__content">{{ $t('navigation.login') }}</p>
-					</div>
+					<lm-button @click.native="login" :text="$t('navigation.login')" type="success" />
 				</div>
 			</lm-card>
 			<div class="help-group">
@@ -36,25 +38,54 @@
 
 <script lang="ts">
 import Vue from "vue";
-import { LmCard } from "@luminu/components";
+import {
+	LmCard,
+	LmButton,
+	LmSeperator,
+	LmNotification
+} from "@luminu/components";
 
 export default Vue.extend({
 	name: "login",
 	components: {
-		LmCard
+		LmCard,
+		LmButton,
+		LmSeperator,
+		LmNotification
 	},
 	data: () => ({
 		user: "",
-		password: ""
+		password: "",
+		notification: {
+			message: "",
+			active: false
+		}
 	}),
 	methods: {
-		async login(): Promise<void> {}
+		async login(): Promise<void> {
+			// Basic typechecking
+			if (!this.user.length) {
+				this.sendNotification("noUsernameSpecified");
+			} else if (!this.password.length) {
+				this.sendNotification("noPasswordSpecified");
+			}
+
+			// Send request to server
+		},
+		sendNotification(message: string) {
+			this.notification.message = message;
+
+			this.notification.active = true;
+			setTimeout(() => {
+				this.notification.active = false;
+			}, 0);
+		}
 	}
 });
 </script>
 
 <style lang="scss" scoped>
-@import "~@luminu/ui-kit/scss/_variables.scss";
+@import "~@luminu/core/scss/_variables.scss";
 
 .login {
 	.container {
@@ -99,17 +130,18 @@ export default Vue.extend({
 			height: 28px;
 			border: 1px solid black;
 			border-radius: 2px;
+			text-indent: 5px;
 
 			transition: box-shadow 0.1s ease-out;
 
 			margin-top: 5px;
 			margin-bottom: 10px;
+			font-size: 14px;
+			text-indent: 5px;
 
 			&:focus {
 				outline: none;
-				font-size: 14px;
-				text-indent: 5px;
-				box-shadow: 0px 0px 0px 2px rgba($color: $lmColor3, $alpha: 0.5);
+				box-shadow: 0px 0px 0px 3px rgba($color: $lmColor3, $alpha: 0.5);
 			}
 		}
 
@@ -119,34 +151,6 @@ export default Vue.extend({
 
 			> div {
 				margin-left: 5px;
-			}
-
-			.btn {
-				padding: 2px 10px;
-				border-radius: 5px;
-				user-select: none;
-				font-size: 14px;
-
-				cursor: pointer;
-				color: white;
-
-				background-color: $lmColor2;
-				box-shadow: 0px 2px rgba($color: $lmColor3, $alpha: 1);
-				transition: background-color 0.1s ease-out;
-
-				&:hover {
-					background-color: $lmColor3;
-				}
-
-				&.success {
-					background-color: $lmSuccess;
-					box-shadow: 0px 3px
-						rgba($color: $lmSuccessDarken, $alpha: 1);
-
-					&:hover {
-						background-color: $lmSuccessDarken;
-					}
-				}
 			}
 		}
 	}

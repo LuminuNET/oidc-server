@@ -1,20 +1,22 @@
-import { Request, Response } from 'express';
-import {
-	checkExistsOidcQueries,
-	verifyOidcQueries,
-	checkExistsInformationQueries,
-	verifyScope,
-	verifyClientId
-} from '../../middleware/checks';
+import { Request, Response, NextFunction } from 'express';
 import authorize from './authorize';
 import TAuthenticationResponse from '../../types/AuthenticationResponseType';
 import TInformationResponse from '../../types/InformationResponseType';
 import information from './information';
+import {
+	checkExistsOidcQueries,
+	verifyOidcQueries
+} from '../../middleware/checks/authorize/authorizeChecks';
+import {
+	verifyClientId,
+	verifyScope
+} from '../../middleware/checks/authorize/globalChecks';
+import { checkExistsInformationQueries } from '../../middleware/checks/authorize/informationChecks';
 
 export default [
 	{
 		path: '/api/v1/authorize',
-		method: 'get',
+		method: 'post',
 		handler: [
 			checkExistsOidcQueries,
 			verifyClientId,
@@ -45,6 +47,16 @@ export default [
 					query.client_id,
 					query.scope
 				);
+				res.status(200).send(result);
+			}
+		]
+	},
+	{
+		path: '/api/v1/login',
+		method: 'post',
+		handler: [
+			async ({ ip }: Request, res: Response) => {
+				const result = {};
 				res.status(200).send(result);
 			}
 		]
