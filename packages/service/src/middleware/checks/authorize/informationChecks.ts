@@ -17,7 +17,7 @@ export const checkExistsInformationQueries = (
 	next: NextFunction
 ) => {
 	if (!query.client_id || !query.scope) {
-		throw new HTTP400Error('Missing information parameters');
+		throw new HTTP400Error('missingInformationParameters');
 	} else {
 		next();
 	}

@@ -24,7 +24,7 @@ export const checkExistsOidcQueries = (
 		!query.nonce ||
 		!query.state
 	) {
-		throw new HTTP400Error('Missing oidc authorize parameter');
+		throw new HTTP400Error('missingOidcAuthorizeParameters');
 	} else {
 		next();
 	}
@@ -41,22 +41,22 @@ export const verifyOidcQueries = (
 	switch (responseTypes.length) {
 		case 1:
 			if (responseTypes[0] !== 'id_token')
-				throw new HTTP400Error('Missing id token request');
+				throw new HTTP400Error('missingIdTokenRequest');
 			break;
 		case 2:
 			if (responseTypes.indexOf('id_token') === -1) {
-				throw new HTTP400Error('Missing id token request');
+				throw new HTTP400Error('missingIdTokenRequest');
 			} else if (responseTypes.indexOf('token') === -1) {
-				throw new HTTP400Error('Missing token request');
+				throw new HTTP400Error('missingTokenRequest');
 			}
 			break;
 		default:
-			throw new HTTP400Error('Too many response types set');
+			throw new HTTP400Error('tooManyResponseTypesSet');
 	}
 
 	// Check if the redirect uri is valid
 	if (services[query.client_id].callback_url !== query.redirect_uri) {
-		throw new HTTP400Error('Redirect Uri invalid');
+		throw new HTTP400Error('redirectUriInvalid');
 	}
 
 	// End validation by calling next function

@@ -18,7 +18,7 @@ export const verifyClientId = (
 ) => {
 	// Check if service exists
 	if (!services[query.client_id]) {
-		throw new HTTP400Error('Client not found');
+		throw new HTTP400Error('clientNotFound');
 	}
 
 	next();
@@ -32,11 +32,11 @@ export const verifyScope = (
 	// Check if scope is valid
 	const scopes: Array<String> = query.scope.split(' ');
 	if (scopes.indexOf('openid') === -1) {
-		throw new HTTP400Error('OpenID not used');
+		throw new HTTP400Error('openIdNotUsed');
 	}
 
 	if (scopes.length === 1) {
-		throw new HTTP400Error('No permissions requested');
+		throw new HTTP400Error('noPermissionRequested');
 	}
 
 	next();
