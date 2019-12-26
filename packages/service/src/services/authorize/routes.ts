@@ -1,4 +1,4 @@
-import { Request, Response } from 'express';
+import { Request, Response, NextFunction } from 'express';
 import authorize from './authorize';
 import TAuthenticationResponse from '../../types/AuthenticationResponseType';
 import TInformationResponse from '../../types/InformationResponseType';
@@ -16,7 +16,7 @@ import { checkExistsInformationQueries } from '../../middleware/checks/authorize
 export default [
 	{
 		path: '/api/v1/authorize',
-		method: 'get',
+		method: 'post',
 		handler: [
 			checkExistsOidcQueries,
 			verifyClientId,
@@ -47,6 +47,16 @@ export default [
 					query.client_id,
 					query.scope
 				);
+				res.status(200).send(result);
+			}
+		]
+	},
+	{
+		path: '/api/v1/login',
+		method: 'post',
+		handler: [
+			async ({ ip }: Request, res: Response) => {
+				const result = {};
 				res.status(200).send(result);
 			}
 		]
