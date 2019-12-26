@@ -26,6 +26,12 @@ type Route = {
 export const applyRoutes = (routes: Route[], router: Router) => {
 	for (const route of routes) {
 		const { method, path, handler } = route;
+		(handler as Handler[]).unshift(setJson);
 		(router as any)[method](path, handler);
 	}
+};
+
+const setJson = async (req: Request, res: Response, next: NextFunction) => {
+	res.type('application/json');
+	next();
 };

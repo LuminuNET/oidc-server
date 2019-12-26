@@ -6,7 +6,7 @@ export abstract class HTTPClientError extends Error {
 		if (message instanceof Object) {
 			super(JSON.stringify(message));
 		} else {
-			super(message);
+			super(JSON.stringify({ message, success: false }));
 		}
 		this.name = this.constructor.name;
 		Error.captureStackTrace(this, this.constructor);
