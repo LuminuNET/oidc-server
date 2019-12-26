@@ -4,6 +4,8 @@ import router from './router';
 import store from './store';
 import i18n from './translations';
 
+import './plugins';
+
 Vue.config.productionTip = false;
 
 const vm = new Vue({
