@@ -19,7 +19,17 @@ const en = {
 	},
 	response: {
 		noUsernameSpecified: 'No username was specified.',
-		noPasswordSpecified: 'No password was specified.'
+		noPasswordSpecified: 'No password was specified.',
+		serviceUnavailable: 'Service unavailable.',
+		clientNotFound: 'Client was not found.',
+		openIdNotUsed: "OpenID isn't used."
+	},
+	permissions: {
+		basic: {
+			profile: 'Basic Profile',
+			email: 'Email'
+		},
+		advanced: {}
 	},
 	footer
 };

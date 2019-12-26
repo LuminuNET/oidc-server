@@ -1,17 +1,25 @@
 <template>
 	<div class="home">
+		<lm-notification :message="$t('response.' + notification.message)" :active="notification.active" />
 		<div class="container">
 			<lm-card class="allow-permissions">
-				<p class="title">Luminu Chat,</p>
+				<p class="title">{{ name }}</p>
 				<p class="description">{{ $t('modal.wantsAccessFollowingPartsFromYourAccount') }}</p>
 				<lm-seperator :mtop="15" :mbottom="13" />
 				<div class="permissions">
-					<div class="permission--basic">
-						<p class="permission">Basic Profile</p>
-						<p class="permission">Global Player Rank</p>
+					<div v-show="permissions.basic.length !== 0" class="permission--basic">
+						<p
+							v-for="(scope, index) in permissions.basic"
+							:key="index"
+							class="permission"
+						>{{ $t('permissions.basic.' + scope) }}</p>
 					</div>
-					<div class="permission--advanced">
-						<p class="permission">Modify Email</p>
+					<div v-show="permissions.advanced.length !== 0" class="permission--advanced">
+						<p
+							v-for="(scope, index) in permissions.advanced"
+							:key="index"
+							class="permission"
+						>{{ $t('permissions.advanced.' + scope) }}</p>
 					</div>
 				</div>
 				<lm-seperator :mtop="15" :mbottom="13" />
@@ -26,14 +34,78 @@
 
 <script lang="ts">
 import Vue from "vue";
-import { LmCard, LmSeperator, LmButton } from "@luminu/components";
+import {
+	LmCard,
+	LmSeperator,
+	LmButton,
+	LmNotification
+} from "@luminu/components";
+import { mapGetters } from "vuex";
+import { GET_OIDC } from "../store/getters.type";
+import { TOidcInput } from "@luminu/types";
+import { AxiosResponse, AxiosError } from "axios";
 
 export default Vue.extend({
 	name: "home",
 	components: {
 		LmCard,
 		LmSeperator,
-		LmButton
+		LmButton,
+		LmNotification
+	},
+	methods: {
+		...mapGetters([GET_OIDC]),
+		sendNotification(message: string) {
+			this.notification.message = message;
+			this.notification.active = true;
+			setTimeout(() => {
+				this.notification.active = false;
+			}, 0);
+		}
+	},
+	data: () => ({
+		name: "",
+		permissions: {
+			basic: [],
+			advanced: []
+		},
+		notification: {
+			message: "",
+			active: false
+		}
+	}),
+	created() {
+		const oidc: TOidcInput = this[GET_OIDC]();
+
+		// handle illegal request
+		if (
+			!oidc.clientId ||
+			!oidc.responseType ||
+			!oidc.redirectUri ||
+			!oidc.scope ||
+			!oidc.state ||
+			!oidc.nonce
+		) {
+		} else {
+			(this as any).$http
+				.get(
+					`information?client_id=${oidc.clientId}&scope=${oidc.scope}`
+				)
+				.then((response: AxiosResponse) => {
+					this.permissions.basic = response.data.permission_basic;
+					this.permissions.advanced =
+						response.data.permission_advanced;
+
+					this.name = response.data.name;
+				})
+				.catch((error: AxiosError) => {
+					if (error.response) {
+						this.sendNotification(error.response.data.message);
+					} else {
+						this.sendNotification("serviceUnavailable");
+					}
+				});
+		}
 	}
 });
 </script>
@@ -84,56 +156,12 @@ export default Vue.extend({
 			> div {
 				margin-left: 5px;
 			}
-
-			.btn {
-				padding: 2px 10px;
-				border-radius: 5px;
-				user-select: none;
-				font-size: 14px;
-
-				cursor: pointer;
-				color: white;
-
-				background-color: $lmColor2;
-				box-shadow: 0px 2px rgba($color: $lmColor3, $alpha: 1);
-				transition: background-color 0.1s ease-out;
-
-				&:hover {
-					background-color: $lmColor3;
-				}
-
-				&.success {
-					background-color: $lmSuccess;
-					box-shadow: 0px 3px
-						rgba($color: $lmSuccessDarken, $alpha: 1);
-
-					&:hover {
-						background-color: $lmSuccessDarken;
-					}
-				}
-
-				&.error {
-					background-color: $lmError;
-					box-shadow: 0px 3px rgba($color: $lmErrorDarken, $alpha: 1);
-
-					&:hover {
-						background-color: $lmErrorDarken;
-					}
-				}
-			}
 		}
+	}
 
-		.seperator {
-			margin-top: 15px;
-			margin-bottom: 30px;
-
-			hr {
-				position: absolute;
-				width: 100%;
-				margin-left: -10px;
-				border: none;
-				border-top: 1px solid rgba($color: #000000, $alpha: 0.3);
-			}
+	@media screen and (max-width: 475px) {
+		.allow-permissions {
+			width: 90%;
 		}
 	}
 }
