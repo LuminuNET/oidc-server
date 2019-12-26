@@ -39,19 +39,7 @@ export default Vue.extend({
 	},
 	created() {
 		this[ENTER_OIDC]();
-		// eslint-disable-next-line no-console
-		console.log(this[GET_OIDC]());
-		// eslint-disable-next-line no-console
-		console.log(this[GET_VALIDITY]());
-	},
-	data: () => ({
-		partners: [
-			{
-				to: "https://cytooxien.de",
-				image: require("@/assets/cytooxien_banner.png")
-			}
-		]
-	})
+	}
 });
 </script>
 
