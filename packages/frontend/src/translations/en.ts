@@ -6,6 +6,9 @@ const en = {
 		forum: 'Forum',
 		login: 'Login'
 	},
+	global: {
+		buildingWebsite: 'Building website'
+	},
 	modal: {
 		accept: 'Accept',
 		deny: 'Deny',
