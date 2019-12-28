@@ -19,69 +19,70 @@ describe('routes', () => {
 		applyMiddleware(errorHandlers, router);
 	});
 
-	test('a non-existing api method', async () => {
-		const response = await request(router).get(
+	//! Authorize endpoint
+	test('a non-existing api endpoint', async () => {
+		const response = await request(router).post(
 			'/api/v11/authorize?response_type=id_token token&client_id=chat.luminu&redirect_uri=https%3A%2F%2Fchat.luminu.net%2Fcb&scope=openid profile&state=4r4sd3r5tefse&nonce=n--dawd...wdawd'
 		);
 		expect(response.status).toEqual(404);
 	});
 
 	test('an empty string', async () => {
-		const response = await request(router).get(
+		const response = await request(router).post(
 			'/api/v1/authorize?response_type=&client_id=chat.luminu&redirect_uri=https%3A%2F%2Fchat.luminu.net%2Fcb&scope=openid profile&state=4r4sd3r5tefse&nonce=n--dawd...wdawd'
 		);
 		expect(response.status).toEqual(400);
+		expect(response.text).toContain('missingOidcAuthorizeParameters');
 	});
 
 	test('response type not available', async () => {
-		const response = await request(router).get(
+		const response = await request(router).post(
 			'/api/v1/authorize?response_type=id&client_id=chat.luminu&redirect_uri=https%3A%2F%2Fchat.luminu.net%2Fcb&scope=openid profile&state=4r4sd3r5tefse&nonce=n--dawd...wdawd'
 		);
 		expect(response.status).toEqual(400);
+		expect(response.text).toContain('missingIdTokenRequest');
 	});
 
 	test('too many response types', async () => {
-		const response = await request(router).get(
+		const response = await request(router).post(
 			'/api/v1/authorize?response_type=id_token token1 wadwd wad&client_id=chat.luminu&redirect_uri=https%3A%2F%2Fchat.luminu.net%2Fcb&scope=openid profile&state=4r4sd3r5tefse&nonce=n--dawd...wdawd'
 		);
 		expect(response.status).toEqual(400);
+		expect(response.text).toContain('tooManyResponseTypesSet');
 	});
 
 	test('client not exists', async () => {
-		const response = await request(router).get(
+		const response = await request(router).post(
 			'/api/v1/authorize?response_type=id_token token&client_id=invalid&redirect_uri=https%3A%2F%2Fchat.luminu.net%2Fcb&scope=openid profile&state=4r4sd3r5tefse&nonce=n--dawd...wdawd'
 		);
 		expect(response.status).toEqual(400);
-	});
-
-	test('redirect uri invalid', async () => {
-		const response = await request(router).get(
-			'/api/v1/authorize?response_type=id_token token&client_id=invalid&redirect_uri=https%3A%2F%2Fluminu.net%2Fcb&scope=openid profile&state=4r4sd3r5tefse&nonce=n--dawd...wdawd'
-		);
-		expect(response.status).toEqual(400);
+		expect(response.text).toContain('clientNotFound');
 	});
 
 	test('openid not used', async () => {
-		const response = await request(router).get(
+		const response = await request(router).post(
 			'/api/v1/authorize?response_type=id_token token&client_id=chat.luminu&redirect_uri=https%3A%2F%2Fchat.luminu.net%2Fcb&scope=profile&state=4r4sd3r5tefse&nonce=n--dawd...wdawd'
 		);
 		expect(response.status).toEqual(400);
+		expect(response.text).toContain('openIdNotUsed');
 	});
 
 	test('no permissions requested', async () => {
-		const response = await request(router).get(
+		const response = await request(router).post(
 			'/api/v1/authorize?response_type=id_token token&client_id=chat.luminu&redirect_uri=https%3A%2F%2Fchat.luminu.net%2Fcb&scope=openid&state=4r4sd3r5tefse&nonce=n--dawd...wdawd'
 		);
 		expect(response.status).toEqual(400);
+		expect(response.text).toContain('noPermissionRequested');
 	});
 
 	test('valid request', async () => {
-		const response = await request(router).get(
+		const response = await request(router).post(
 			'/api/v1/authorize?response_type=id_token token&client_id=chat.luminu&redirect_uri=https%3A%2F%2Fchat.luminu.net%2Fcb&scope=openid profile&state=4r4sd3r5tefse&nonce=n--dawd...wdawd'
 		);
 		expect(response.status).toEqual(302);
 	});
 
+	//! Information endpoint
 	test('query missing', async () => {
 		const response = await request(router).get(
 			'/api/v1/information?client_id=&scope=openid profile'

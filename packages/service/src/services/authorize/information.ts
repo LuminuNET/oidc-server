@@ -1,15 +1,20 @@
 import TInformationResponse from '../../types/InformationResponseType';
-import { getServices, getClaims } from '../../middleware/configuration';
+import {
+	getServices,
+	getClaims,
+	getServiceByClientId
+} from '../../middleware/configuration';
 import TService from '../../types/ServiceType';
 
 export default async (
-	clientId: String,
-	scope: String
+	clientId: string,
+	scope: string
 ): Promise<TInformationResponse> => {
 	const services = await getServices();
 	const claims = await getClaims();
 
-	const service: TService = services[clientId as any];
+	// @ts-ignore
+	const service: TService = getServiceByClientId(clientId);
 	const scopes = scope.split(' ').filter(el => el !== 'openid');
 
 	const basicScopes: Array<String> = scopes.filter(element => {
