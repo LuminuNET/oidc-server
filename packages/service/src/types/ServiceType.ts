@@ -1,4 +1,5 @@
 type TService = {
+	client_id: string;
 	name: string;
 	domain: string;
 	callback_url: string;
