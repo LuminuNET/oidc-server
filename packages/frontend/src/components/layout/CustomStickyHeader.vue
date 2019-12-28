@@ -1,7 +1,7 @@
 <template>
 	<lm-sticky-header :links="links">
-		<li class="user-auth" @click="$router.push({path:'login'})">
-			<p>{{ $t('navigation.login') }}</p>
+		<li class="user-auth">
+			<p @click="$router.push({path:'login'})">{{ $t('navigation.login') }}</p>
 		</li>
 	</lm-sticky-header>
 </template>
