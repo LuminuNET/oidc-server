@@ -1,20 +1,24 @@
 <template>
 	<div class="home">
 		<lm-notification :message="$t('response.' + notification.message)" :active="notification.active" />
+
 		<div class="container">
 			<lm-card class="allow-permissions">
 				<p class="title">{{ name }}</p>
 				<p class="description">{{ $t('modal.wantsAccessFollowingPartsFromYourAccount') }}</p>
+
 				<lm-seperator :mtop="15" :mbottom="13" />
+
 				<div class="permissions">
-					<div v-show="permissions.basic.length !== 0" class="permission--basic">
+					<div v-if="permissions.basic.length" class="permission--basic">
 						<p
 							v-for="(scope, index) in permissions.basic"
 							:key="index"
 							class="permission"
 						>{{ $t('permissions.basic.' + scope) }}</p>
 					</div>
-					<div v-show="permissions.advanced.length !== 0" class="permission--advanced">
+
+					<div v-if="permissions.advanced.length" class="permission--advanced">
 						<p
 							v-for="(scope, index) in permissions.advanced"
 							:key="index"
@@ -22,7 +26,9 @@
 						>{{ $t('permissions.advanced.' + scope) }}</p>
 					</div>
 				</div>
+
 				<lm-seperator :mtop="15" :mbottom="13" />
+
 				<div class="btn-group">
 					<lm-button :text="$t('modal.deny')" type="error" />
 					<lm-button :text="$t('modal.accept')" type="success" />
@@ -40,10 +46,12 @@ import {
 	LmButton,
 	LmNotification
 } from "@luminu/components";
-import { mapGetters } from "vuex";
-import { GET_OIDC } from "../store/getters.type";
+import { mapGetters, mapActions } from "vuex";
+import { GET_OIDC, GET_PROMPT } from "../store/getters.type";
 import { TOidcInput } from "@luminu/types";
-import { AxiosResponse, AxiosError } from "axios";
+import Axios, { AxiosResponse, AxiosError } from "axios";
+import { api } from "../plugins/axios";
+import { REGISTER_LOADING, FINISHED_LOADING } from "../store/actions.type";
 
 export default Vue.extend({
 	name: "home",
@@ -52,16 +60,6 @@ export default Vue.extend({
 		LmSeperator,
 		LmButton,
 		LmNotification
-	},
-	methods: {
-		...mapGetters([GET_OIDC]),
-		sendNotification(message: string) {
-			this.notification.message = message;
-			this.notification.active = true;
-			setTimeout(() => {
-				this.notification.active = false;
-			}, 0);
-		}
 	},
 	data: () => ({
 		name: "",
@@ -74,10 +72,9 @@ export default Vue.extend({
 			active: false
 		}
 	}),
-	created() {
+	mounted() {
 		const oidc: TOidcInput = this[GET_OIDC]();
 
-		// handle illegal request
 		if (
 			!oidc.clientId ||
 			!oidc.responseType ||
@@ -86,25 +83,74 @@ export default Vue.extend({
 			!oidc.state ||
 			!oidc.nonce
 		) {
+			this.sendNotification("oidcRequiredParametersNotGiven");
 		} else {
-			(this as any).$http
-				.get(
-					`information?client_id=${oidc.clientId}&scope=${oidc.scope}`
-				)
-				.then((response: AxiosResponse) => {
-					this.permissions.basic = response.data.permission_basic;
-					this.permissions.advanced =
-						response.data.permission_advanced;
+			const prompt = this[GET_PROMPT]();
 
-					this.name = response.data.name;
-				})
-				.catch((error: AxiosError) => {
-					if (error.response) {
-						this.sendNotification(error.response.data.message);
-					} else {
-						this.sendNotification("serviceUnavailable");
+			switch (prompt) {
+				case "none":
+					this.consentGiven(oidc, prompt);
+					break;
+				case "consent":
+					this.getInformation(oidc);
+					break;
+				default:
+					this.getInformation(oidc);
+			}
+		}
+	},
+	methods: {
+		...mapGetters([GET_OIDC, GET_PROMPT]),
+		...mapActions([FINISHED_LOADING, REGISTER_LOADING]),
+		sendNotification(message: string) {
+			this.notification.message = message;
+			this.notification.active = true;
+			setTimeout(() => {
+				this.notification.active = false;
+			}, 0);
+		},
+		consentGiven(oidc: TOidcInput, prompt: string) {
+			api.post(
+				`/authorize?response_type=${oidc.responseType}
+						&client_id=${oidc.clientId}
+						&redirect_uri=${oidc.redirectUri}
+						&scope=${oidc.scope}
+						&state=${oidc.state}
+						&nonce=${oidc.nonce}
+						&prompt=${prompt}`,
+				null,
+				{
+					headers: {
+						Authorization: "Bearer " + "lololololololololololol"
 					}
-				});
+				}
+			);
+		},
+		getInformation(oidc: TOidcInput) {
+			this[REGISTER_LOADING]();
+
+			setTimeout(() => {
+				api.get(
+					`/information?client_id=${oidc.clientId}&scope=${oidc.scope}`
+				)
+					.then((response: AxiosResponse) => {
+						this.permissions.basic = response.data.permission_basic;
+						this.permissions.advanced =
+							response.data.permission_advanced;
+
+						this.name = response.data.name;
+					})
+					.catch((error: AxiosError) => {
+						if (error.response) {
+							this.sendNotification(error.response.data.message);
+						} else {
+							this.sendNotification("serviceUnavailable");
+						}
+					})
+					.finally(() => {
+						this[FINISHED_LOADING]();
+					});
+			}, 500);
 		}
 	}
 });

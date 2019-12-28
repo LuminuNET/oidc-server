@@ -1,15 +1,7 @@
 import { Request, Response, NextFunction } from 'express';
 import TService from '../../../types/ServiceType';
-import { getServices } from '../../configuration';
+import { getServiceByClientId } from '../../configuration';
 import { HTTP400Error } from '../../../utils/httpErrors';
-
-let services: Array<TService>;
-
-const loadServices = async () => {
-	services = await getServices();
-};
-
-loadServices();
 
 export const verifyClientId = (
 	{ query }: Request,
@@ -17,7 +9,9 @@ export const verifyClientId = (
 	next: NextFunction
 ) => {
 	// Check if service exists
-	if (!services[query.client_id]) {
+	const service: TService | null = getServiceByClientId(query.client_id);
+
+	if (service === null) {
 		throw new HTTP400Error('clientNotFound');
 	}
 

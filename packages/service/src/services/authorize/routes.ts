@@ -22,7 +22,8 @@ export default [
 			verifyClientId,
 			verifyScope,
 			verifyOidcQueries,
-			async ({ query }: Request, res: Response) => {
+			async ({ query, headers }: Request, res: Response) => {
+				console.log(headers);
 				const result: TAuthenticationResponse = await authorize(
 					query.response_type,
 					query.client_id,

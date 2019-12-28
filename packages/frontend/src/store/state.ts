@@ -7,7 +7,11 @@ const state = {
 		scope: '',
 		state: '',
 		nonce: ''
-	}
+	},
+	prompt: 'consent',
+	loading: true,
+	loaders: 0,
+	finishedLoaders: 0
 };
 
 export default state;

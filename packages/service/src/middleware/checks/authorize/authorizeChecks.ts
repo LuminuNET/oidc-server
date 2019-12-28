@@ -1,15 +1,6 @@
 import { Request, Response, NextFunction } from 'express';
-import TService from '../../../types/ServiceType';
-import { getServices } from '../../configuration';
+import { getServiceByClientId } from '../../configuration';
 import { HTTP400Error } from '../../../utils/httpErrors';
-
-let services: Array<TService>;
-
-const loadServices = async () => {
-	services = await getServices();
-};
-
-loadServices();
 
 export const checkExistsOidcQueries = (
 	{ query }: Request,
@@ -52,11 +43,6 @@ export const verifyOidcQueries = (
 			break;
 		default:
 			throw new HTTP400Error('tooManyResponseTypesSet');
-	}
-
-	// Check if the redirect uri is valid
-	if (services[query.client_id].callback_url !== query.redirect_uri) {
-		throw new HTTP400Error('redirectUriInvalid');
 	}
 
 	// End validation by calling next function
