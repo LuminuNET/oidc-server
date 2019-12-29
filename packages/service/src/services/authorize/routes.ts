@@ -1,17 +1,30 @@
-import { Request, Response, NextFunction } from 'express';
+// successful tasks
 import authorize from './authorize';
+import information from './information';
+import authenticateUser from './login';
+
+// types import
+import { Request, Response, NextFunction } from 'express';
 import TAuthenticationResponse from '../../types/AuthenticationResponseType';
 import TInformationResponse from '../../types/InformationResponseType';
-import information from './information';
+
+// middleware
 import {
 	checkExistsOidcQueries,
-	verifyOidcQueries
+	verifyOidcQueries,
+	verifyPrompt
 } from '../../middleware/checks/authorize/authorizeChecks';
 import {
 	verifyClientId,
 	verifyScope
 } from '../../middleware/checks/authorize/globalChecks';
 import { checkExistsInformationQueries } from '../../middleware/checks/authorize/informationChecks';
+import {
+	checkUserOrEmailExists,
+	getPasswordHash,
+	checkPassword,
+	checkAmountLoginAttempts
+} from '../../middleware/checks/authorize/loginChecks';
 
 export default [
 	{
@@ -22,13 +35,14 @@ export default [
 			verifyClientId,
 			verifyScope,
 			verifyOidcQueries,
+			verifyPrompt,
 			async ({ query, headers }: Request, res: Response) => {
 				console.log(headers);
 				const result: TAuthenticationResponse = await authorize(
 					query.response_type,
 					query.client_id,
 					query.redirect_uri,
-					query.scope,
+					res.locals.scopes,
 					query.state,
 					query.nonce
 				);
@@ -56,8 +70,15 @@ export default [
 		path: '/api/v1/login',
 		method: 'post',
 		handler: [
-			async ({ ip }: Request, res: Response) => {
-				const result = {};
+			checkAmountLoginAttempts,
+			checkUserOrEmailExists,
+			getPasswordHash,
+			checkPassword,
+			async (req: Request, res: Response) => {
+				const result = authenticateUser(
+					res.locals.user.userId,
+					res.locals.user.username
+				);
 				res.status(200).send(result);
 			}
 		]
