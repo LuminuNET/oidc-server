@@ -1,5 +1,5 @@
 import TService from '../types/ServiceType';
-import { getValue, setValue, delValue } from './redis';
+import { getValue, setValue } from './redis';
 import { webPool } from './database';
 import { MysqlError } from 'mysql';
 
