@@ -11,7 +11,10 @@ const state = {
 	prompt: 'consent',
 	loading: true,
 	loaders: 0,
-	finishedLoaders: 0
+	finishedLoaders: 0,
+	isLoggedIn: false,
+	userId: -1,
+	username: ''
 };
 
 export default state;
