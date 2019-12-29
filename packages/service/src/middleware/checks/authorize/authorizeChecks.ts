@@ -1,6 +1,10 @@
 import { Request, Response, NextFunction } from 'express';
-import { getServiceByClientId } from '../../configuration';
+import {
+	getServiceByClientId,
+	getUserGrantsFromUser
+} from '../../configuration';
 import { HTTP400Error } from '../../../utils/httpErrors';
+import LooseObject from '../../../types/LooseObject';
 
 export const checkExistsOidcQueries = (
 	{ query }: Request,
@@ -46,5 +50,29 @@ export const verifyOidcQueries = (
 	}
 
 	// End validation by calling next function
+	next();
+};
+
+export const verifyPrompt = async (
+	{ query }: Request,
+	res: Response,
+	next: NextFunction
+) => {
+	//! Setting the user id hardcoded. Replace with res.locals later
+	const userId = 4;
+
+	const userGrants: LooseObject = await getUserGrantsFromUser(userId);
+
+	if (query.prompt === 'none') {
+		if (!userGrants[res.locals.clientId]) {
+			throw new HTTP400Error('promptCannotBeNoneIfNoConsentGiven');
+		} else if (
+			JSON.stringify(userGrants[res.locals.clientId].scopes) !==
+			JSON.stringify(res.locals.scopes)
+		) {
+			throw new HTTP400Error('requestingUnallowedScopes');
+		}
+	}
+
 	next();
 };

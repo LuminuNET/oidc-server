@@ -15,6 +15,8 @@ export const verifyClientId = (
 		throw new HTTP400Error('clientNotFound');
 	}
 
+	res.locals.clientId = query.client_id;
+
 	next();
 };
 
@@ -32,6 +34,8 @@ export const verifyScope = (
 	if (scopes.length === 1) {
 		throw new HTTP400Error('noPermissionRequested');
 	}
+
+	res.locals.scopes = scopes;
 
 	next();
 };
