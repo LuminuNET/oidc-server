@@ -21,7 +21,7 @@ const en = {
 		password: 'Password'
 	},
 	response: {
-		noUsernameSpecified: 'No username was specified.',
+		noUsernameOrEmailSpecified: 'No username or email was specified.',
 		noPasswordSpecified: 'No password was specified.',
 		serviceUnavailable: 'Service unavailable.',
 		clientNotFound: 'Client was not found.',

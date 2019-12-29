@@ -4,3 +4,6 @@ export const SET_PROMPT = 'setPrompt';
 export const UPDATE_LOADING_STATE = 'updateLoadingState';
 export const ADD_LOADER = 'addLoader';
 export const ADD_FINISHED_LOADER = 'addFinishedLoader';
+export const SET_LOGGED_IN_STATUS = 'setLoggedInStatus';
+export const SET_USER_ID = 'setUserId';
+export const SET_USERNAME = 'setUsername';

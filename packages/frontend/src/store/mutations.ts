@@ -4,7 +4,10 @@ import {
 	SET_PROMPT,
 	ADD_LOADER,
 	ADD_FINISHED_LOADER,
-	UPDATE_LOADING_STATE
+	UPDATE_LOADING_STATE,
+	SET_LOGGED_IN_STATUS,
+	SET_USER_ID,
+	SET_USERNAME
 } from './mutations.type';
 
 const mutations = {
@@ -25,6 +28,15 @@ const mutations = {
 	},
 	[UPDATE_LOADING_STATE](store: any, payload: boolean) {
 		store.loading = payload;
+	},
+	[SET_LOGGED_IN_STATUS](store: any, payload: boolean) {
+		store.isLoggedIn = payload;
+	},
+	[SET_USER_ID](store: any, payload: number) {
+		store.userId = payload;
+	},
+	[SET_USERNAME](store: any, payload: string) {
+		store.username = payload;
 	}
 };
 

@@ -6,12 +6,9 @@ import {
 	getServiceByClientId
 } from '../../middleware/configuration';
 import jwt from 'jsonwebtoken';
+import LooseObject from '../../types/LooseObject';
 
 dotenv.config();
-
-type LooseObject = object & {
-	[key: string]: any;
-};
 
 const signToken = (payload: object, privateKey: string) => {
 	return jwt.sign(
@@ -31,21 +28,22 @@ export default async (
 	responseType: string,
 	clientId: string,
 	redirectUri: string,
-	scope: string,
+	scopes: string[],
 	state: string,
 	nonce: string
 ): Promise<TAuthenticationResponse> => {
-	const responseTypes: Array<string> = responseType.split(' ');
-
 	//! Setting the user id hardcoded. Replace with res.locals later
 	const userId = 4;
+
+	const responseTypes: Array<string> = responseType.split(' ');
+	const userGrants: LooseObject = await getUserGrantsFromUser(userId);
 
 	// Get private key
 	const service = getServiceByClientId(clientId);
 	const privateKey = service?.private_key + '';
 
 	// Get JWT access Token
-	const accessToken = signToken({ userId }, privateKey);
+	const accessToken = signToken({ userId, groupPriority: 3 }, privateKey);
 
 	// Get JWT id token
 	const idToken = signToken(
@@ -59,15 +57,10 @@ export default async (
 		privateKey
 	);
 
-	// Get scopes
-	const scopes = scope.split(' ');
-
 	// Build user grant
 	const userGrant = {
 		scopes
 	};
-
-	const userGrants: LooseObject = await getUserGrantsFromUser(userId);
 
 	userGrants[clientId] = userGrant;
 

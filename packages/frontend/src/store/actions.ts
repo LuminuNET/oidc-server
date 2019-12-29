@@ -3,7 +3,8 @@ import {
 	ENTER_OIDC,
 	ENTER_PROMPT,
 	REGISTER_LOADING,
-	FINISHED_LOADING
+	FINISHED_LOADING,
+	CHECK_LOGGED_IN
 } from './actions.type';
 import {
 	SET_OIDC,
@@ -11,10 +12,15 @@ import {
 	SET_PROMPT,
 	ADD_LOADER,
 	ADD_FINISHED_LOADER,
-	UPDATE_LOADING_STATE
+	UPDATE_LOADING_STATE,
+	SET_LOGGED_IN_STATUS,
+	SET_USER_ID,
+	SET_USERNAME
 } from './mutations.type';
 import { TOidcInput } from '@luminu/types';
 import { GET_FINISHED_LOADERS, GET_LOADERS } from './getters.type';
+import { getItem } from '@/common/localStorage.service';
+import jwt from 'jsonwebtoken';
 
 const getQueries = (): URLSearchParams => {
 	const search = window.location.search;
@@ -62,8 +68,22 @@ const actions = {
 		const loaders: number = getters[GET_LOADERS];
 		const finishedLoaders: number = getters[GET_FINISHED_LOADERS];
 
-		if (loaders === finishedLoaders && loaders) {
+		if (loaders <= finishedLoaders && finishedLoaders) {
 			commit(UPDATE_LOADING_STATE, false);
+		}
+	},
+	[CHECK_LOGGED_IN]({ commit }: { commit: any }) {
+		const accessToken = getItem('access_token');
+
+		if (accessToken !== null) {
+			const payload: any = jwt.decode(accessToken);
+
+			commit(SET_USER_ID, payload.userId);
+			commit(SET_USERNAME, payload.username);
+			commit(SET_LOGGED_IN_STATUS, true);
+		} else {
+			commit(SET_USER_ID, -1);
+			commit(SET_LOGGED_IN_STATUS, false);
 		}
 	}
 };
