@@ -18,6 +18,7 @@
 					type="password"
 					name="password"
 					id="password"
+					ref="password"
 				/>
 				<lm-seperator :mbottom="14" />
 				<div class="btn-group">
@@ -44,6 +45,11 @@ import {
 	LmSeperator,
 	LmNotification
 } from "@luminu/components";
+import { api } from "../plugins/axios";
+import { AxiosResponse, AxiosError } from "axios";
+import { mapActions } from "vuex";
+import { FINISHED_LOADING, CHECK_LOGGED_IN } from "../store/actions.type";
+import { setItem } from "../common/localStorage.service";
 
 export default Vue.extend({
 	name: "login",
@@ -61,16 +67,39 @@ export default Vue.extend({
 			active: false
 		}
 	}),
+	mounted() {
+		setTimeout(() => {
+			this[FINISHED_LOADING]();
+		}, 0);
+	},
 	methods: {
+		...mapActions([FINISHED_LOADING, CHECK_LOGGED_IN]),
 		async login(): Promise<void> {
 			// Basic typechecking
 			if (!this.user.length) {
-				this.sendNotification("noUsernameSpecified");
+				this.sendNotification("noUsernameOrEmailSpecified");
 			} else if (!this.password.length) {
 				this.sendNotification("noPasswordSpecified");
 			}
 
 			// Send request to server
+			api.post("/login", {
+				user: this.user,
+				password: this.password
+			})
+				.then((response: AxiosResponse) => {
+					setItem("access_token", response.data.accessToken);
+					this.sendNotification(response.data.message);
+					this[CHECK_LOGGED_IN]();
+					this.$router.push({ path: "/" });
+				})
+				.catch((error: AxiosError) => {
+					if (error.response) {
+						this.sendNotification(error.response.data.message);
+						// @ts-ignore
+						this.$refs.password.value = "";
+					}
+				});
 		},
 		sendNotification(message: string) {
 			this.notification.message = message;
