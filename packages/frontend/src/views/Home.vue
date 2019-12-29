@@ -31,7 +31,7 @@
 
 				<div class="btn-group">
 					<lm-button :text="$t('modal.deny')" type="error" />
-					<lm-button :text="$t('modal.accept')" type="success" />
+					<lm-button :text="$t('modal.accept')" type="success" @click.native="consentGiven(null)" />
 				</div>
 			</lm-card>
 		</div>
@@ -84,6 +84,9 @@ export default Vue.extend({
 			!oidc.nonce
 		) {
 			this.sendNotification("oidcRequiredParametersNotGiven");
+			setTimeout(() => {
+				this[FINISHED_LOADING]();
+			}, 0);
 		} else {
 			const prompt = this[GET_PROMPT]();
 
@@ -109,7 +112,19 @@ export default Vue.extend({
 				this.notification.active = false;
 			}, 0);
 		},
-		consentGiven(oidc: TOidcInput, prompt: string) {
+		successfulResponse(oidc: TOidcInput, data: any) {
+			window.location.href = `${oidc.redirectUri}
+									?state=${data.state}
+									&access_token=${data.access_token}
+									&id_token=${data.id_token}
+									&expires_in=${data.expires_in}
+									&token_type=${data.token_type}`;
+		},
+		consentGiven(oidc: TOidcInput, prompt?: string) {
+			if (oidc === null) {
+				oidc = this[GET_OIDC]();
+			}
+
 			api.post(
 				`/authorize?response_type=${oidc.responseType}
 						&client_id=${oidc.clientId}
@@ -124,7 +139,21 @@ export default Vue.extend({
 						Authorization: "Bearer " + "lololololololololololol"
 					}
 				}
-			);
+			).catch((error: AxiosError) => {
+				if (error.response) {
+					const statusCode = error.response.status;
+
+					switch (statusCode) {
+						case 302:
+							this.successfulResponse(oidc, error.response.data);
+							break;
+						default:
+							this.sendNotification(error.response.data.message);
+					}
+				} else {
+					this.sendNotification("serviceUnavailable");
+				}
+			});
 		},
 		getInformation(oidc: TOidcInput) {
 			this[REGISTER_LOADING]();
