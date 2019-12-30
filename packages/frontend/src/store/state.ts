@@ -14,7 +14,8 @@ const state = {
 	finishedLoaders: 0,
 	isLoggedIn: false,
 	userId: -1,
-	username: ''
+	username: '',
+	hasAvatar: false
 };
 
 export default state;
