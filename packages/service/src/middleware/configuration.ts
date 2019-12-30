@@ -1,10 +1,12 @@
 import TService from '../types/ServiceType';
 import { getValue, setValue } from './redis';
-import { webPool } from './database';
+import { webPool, forumPool } from './database';
 import { MysqlError } from 'mysql';
+import TGroup from '../types/GroupType';
 
 let claims: any;
 let services: Array<TService>;
+let groups: any;
 
 const loadClaims = async () => {
 	claims = await import('../config/claims.json' as 'json');
@@ -123,6 +125,43 @@ const getUserGrantsFromUser = async (userId: number): Promise<object> => {
 	return userGrants;
 };
 
+const getGroupInformationFromUser = (userGroupId: number) => {
+	let userGroup: TGroup | null = null;
+
+	groups.forEach((element: TGroup) => {
+		if (element.user_group_id === userGroupId) userGroup = element;
+	});
+
+	return userGroup;
+};
+
+const formatGroups = (groups: TGroup[]): TGroup[] => {
+	return groups.sort(
+		(a: any, b: any) => b.display_style_priority - a.display_style_priority
+	);
+};
+
+const loadGroups = async () => {
+	const redisGroups = await getValue('groups');
+
+	if (redisGroups === null) {
+		forumPool.query(
+			'SELECT * FROM xf_user_group',
+			(error: MysqlError, result: TGroup[]) => {
+				if (error) {
+					console.error(
+						'Unexpected error on getting groups ' + error
+					);
+				}
+
+				groups = formatGroups(result);
+			}
+		);
+	} else {
+		groups = JSON.parse(redisGroups);
+	}
+};
+
 const loadServices = async () => {
 	const redisServices = await getValue('services');
 
@@ -148,6 +187,7 @@ const loadServices = async () => {
 const loadConfiguration = () => {
 	loadClaims();
 	loadServices();
+	loadGroups();
 };
 
 loadConfiguration();
