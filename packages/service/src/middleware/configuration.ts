@@ -125,7 +125,9 @@ const getUserGrantsFromUser = async (userId: number): Promise<object> => {
 	return userGrants;
 };
 
-const getGroupInformationFromUser = (userGroupId: number) => {
+export const getGroupInformationFromUser = (
+	userGroupId: number
+): TGroup | null => {
 	let userGroup: TGroup | null = null;
 
 	groups.forEach((element: TGroup) => {

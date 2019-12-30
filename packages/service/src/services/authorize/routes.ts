@@ -12,7 +12,9 @@ import TInformationResponse from '../../types/InformationResponseType';
 import {
 	checkExistsOidcQueries,
 	verifyOidcQueries,
-	verifyPrompt
+	verifyPrompt,
+	verifyAccessToken,
+	getProfileInformation
 } from '../../middleware/checks/authorize/authorizeChecks';
 import {
 	verifyClientId,
@@ -31,20 +33,22 @@ export default [
 		path: '/api/v1/authorize',
 		method: 'post',
 		handler: [
+			verifyAccessToken,
 			checkExistsOidcQueries,
 			verifyClientId,
 			verifyScope,
 			verifyOidcQueries,
 			verifyPrompt,
-			async ({ query, headers }: Request, res: Response) => {
-				console.log(headers);
+			getProfileInformation,
+			async ({ query }: Request, res: Response) => {
 				const result: TAuthenticationResponse = await authorize(
 					query.response_type,
 					query.client_id,
 					query.redirect_uri,
 					res.locals.scopes,
 					query.state,
-					query.nonce
+					query.nonce,
+					res.locals.user
 				);
 				res.status(302).send(result);
 			}

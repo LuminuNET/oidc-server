@@ -24,16 +24,36 @@ const signToken = (payload: object, privateKey: string) => {
 	);
 };
 
+const flattenObject = function(ob: LooseObject) {
+	let toReturn: any = {};
+
+	for (var i in ob) {
+		if (!ob.hasOwnProperty(i)) continue;
+
+		if (typeof ob[i] == 'object') {
+			const flatObject = flattenObject(ob[i]);
+			for (let x in flatObject) {
+				if (!flatObject.hasOwnProperty(x)) continue;
+
+				toReturn[x] = flatObject[x];
+			}
+		} else {
+			toReturn[i] = ob[i];
+		}
+	}
+	return toReturn;
+};
+
 export default async (
 	responseType: string,
 	clientId: string,
 	redirectUri: string,
 	scopes: string[],
 	state: string,
-	nonce: string
+	nonce: string,
+	user: any
 ): Promise<TAuthenticationResponse> => {
-	//! Setting the user id hardcoded. Replace with res.locals later
-	const userId = 4;
+	const userId = user.userId;
 
 	const responseTypes: Array<string> = responseType.split(' ');
 	const userGrants: LooseObject = await getUserGrantsFromUser(userId);
@@ -45,14 +65,23 @@ export default async (
 	// Get JWT access Token
 	const accessToken = signToken({ userId, groupPriority: 3 }, privateKey);
 
+	const requiredInformation: String[] = Object.keys(user).filter(
+		element => scopes.indexOf(element) !== -1
+	);
+
+	const requiredCachedInformation = requiredInformation.map(
+		(element: any) => user[element]
+	);
+
 	// Get JWT id token
 	const idToken = signToken(
 		{
 			aud: clientId,
-			nickname: 'Keimeno',
-			group: 'Developer',
-			groupPriority: 3,
-			nonce
+			nonce,
+			userId: user.userId,
+			username: user.username,
+			hasAvatar: user.hasAvatar,
+			...flattenObject(requiredCachedInformation)
 		},
 		privateKey
 	);
@@ -68,7 +97,7 @@ export default async (
 
 	return {
 		id_token: idToken,
-		expires_in: 3600,
+		expires_in: 600,
 		state,
 		access_token: accessToken,
 		token_type: 'bearer'
