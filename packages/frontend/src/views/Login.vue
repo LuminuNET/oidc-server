@@ -91,7 +91,10 @@ export default Vue.extend({
 					setItem("access_token", response.data.accessToken);
 					this.sendNotification(response.data.message);
 					this[CHECK_LOGGED_IN]();
-					this.$router.push({ path: "/" });
+					this.$router.push({
+						path: "/",
+						query: { ...this.$route.query }
+					});
 				})
 				.catch((error: AxiosError) => {
 					if (error.response) {
