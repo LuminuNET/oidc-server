@@ -3,10 +3,14 @@
 		<li class="user-auth">
 			<p
 				v-if="!isLoggedIn"
-				@click="isLoggedIn ? '' : $router.push({path:'login'})"
+				@click="isLoggedIn ? '' : $router.push({path:'login', query: {...$route.query}})"
 			>{{ $t('navigation.login') }}</p>
 			<p v-else>
-				<img class="user-auth__avatar" :src="`https://luminu.net/data/avatars/m/0/${userId}.jpg`" alt />
+				<img
+					class="user-auth__avatar"
+					:src="hasAvatar ? `https://luminu.net/data/avatars/m/0/${userId}.jpg` : 'https://luminu.net/img/noAvatar.png'"
+					alt
+				/>
 				<span class="user-auth__name">{{ username }}</span>
 			</p>
 		</li>
@@ -48,6 +52,7 @@ export default Vue.extend({
 					this.isLoggedIn = state.isLoggedIn;
 					this.userId = state.userId;
 					this.username = state.username;
+					this.hasAvatar = state.hasAvatar;
 					break;
 			}
 		});
@@ -59,6 +64,7 @@ export default Vue.extend({
 		isLoggedIn: false,
 		userId: -1,
 		username: "",
+		hasAvatar: false,
 		links: [
 			{
 				name: "home",

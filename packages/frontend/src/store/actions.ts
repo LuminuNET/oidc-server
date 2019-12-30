@@ -15,7 +15,8 @@ import {
 	UPDATE_LOADING_STATE,
 	SET_LOGGED_IN_STATUS,
 	SET_USER_ID,
-	SET_USERNAME
+	SET_USERNAME,
+	SET_AVATAR
 } from './mutations.type';
 import { TOidcInput } from '@luminu/types';
 import { GET_FINISHED_LOADERS, GET_LOADERS } from './getters.type';
@@ -60,6 +61,7 @@ const actions = {
 		commit(SET_PROMPT, payload);
 	},
 	[REGISTER_LOADING]({ commit }: { commit: any }) {
+		commit(UPDATE_LOADING_STATE, true);
 		commit(ADD_LOADER);
 	},
 	[FINISHED_LOADING]({ commit, getters }: { commit: any; getters: any }) {
@@ -80,6 +82,7 @@ const actions = {
 
 			commit(SET_USER_ID, payload.userId);
 			commit(SET_USERNAME, payload.username);
+			commit(SET_AVATAR, payload.hasAvatar);
 			commit(SET_LOGGED_IN_STATUS, true);
 		} else {
 			commit(SET_USER_ID, -1);

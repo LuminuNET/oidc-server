@@ -3,9 +3,13 @@ import dotenv from 'dotenv';
 
 dotenv.config();
 
-export default (userId: number, username: string): object => {
+export default (
+	userId: number,
+	username: string,
+	hasAvatar: boolean
+): object => {
 	const accessToken = jwt.sign(
-		{ userId, username },
+		{ userId, username, hasAvatar },
 		process.env.PRIVATE_KEY + '',
 		{
 			algorithm: 'HS256',

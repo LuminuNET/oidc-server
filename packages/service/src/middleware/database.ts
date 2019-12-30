@@ -59,9 +59,9 @@ webPool.getConnection((err, connection) => {
 
 // Promisify for Node.js async/await.
 // @ts-ignore
-// forumPool.query = util.promisify(forumPool.query);
+forumPool.query = util.promisify(forumPool.query);
 
 // @ts-ignore
-// webPool.query = util.promisify(webPool.query);
+webPool.query = util.promisify(webPool.query);
 
 export { forumPool, webPool };

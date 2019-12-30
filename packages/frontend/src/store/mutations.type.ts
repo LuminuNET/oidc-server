@@ -7,3 +7,4 @@ export const ADD_FINISHED_LOADER = 'addFinishedLoader';
 export const SET_LOGGED_IN_STATUS = 'setLoggedInStatus';
 export const SET_USER_ID = 'setUserId';
 export const SET_USERNAME = 'setUsername';
+export const SET_AVATAR = 'setAvatar';

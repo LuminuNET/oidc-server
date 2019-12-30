@@ -77,7 +77,8 @@ export default [
 			async (req: Request, res: Response) => {
 				const result = authenticateUser(
 					res.locals.user.userId,
-					res.locals.user.username
+					res.locals.user.username,
+					res.locals.user.hasAvatar
 				);
 				res.status(200).send(result);
 			}

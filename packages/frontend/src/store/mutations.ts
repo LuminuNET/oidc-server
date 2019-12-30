@@ -7,7 +7,8 @@ import {
 	UPDATE_LOADING_STATE,
 	SET_LOGGED_IN_STATUS,
 	SET_USER_ID,
-	SET_USERNAME
+	SET_USERNAME,
+	SET_AVATAR
 } from './mutations.type';
 
 const mutations = {
@@ -37,6 +38,9 @@ const mutations = {
 	},
 	[SET_USERNAME](store: any, payload: string) {
 		store.username = payload;
+	},
+	[SET_AVATAR](store: any, payload: string) {
+		store.hasAvatar = payload;
 	}
 };
 
