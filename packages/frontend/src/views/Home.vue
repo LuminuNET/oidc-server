@@ -52,6 +52,7 @@ import { TOidcInput } from "@luminu/types";
 import Axios, { AxiosResponse, AxiosError } from "axios";
 import { api } from "../plugins/axios";
 import { REGISTER_LOADING, FINISHED_LOADING } from "../store/actions.type";
+import { getItem } from "../common/localStorage.service";
 
 export default Vue.extend({
 	name: "home",
@@ -136,7 +137,7 @@ export default Vue.extend({
 				null,
 				{
 					headers: {
-						Authorization: "Bearer " + "lololololololololololol"
+						Authorization: "Bearer " + getItem("access_token")
 					}
 				}
 			).catch((error: AxiosError) => {
