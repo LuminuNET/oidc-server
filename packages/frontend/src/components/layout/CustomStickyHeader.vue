@@ -1,20 +1,28 @@
 <template>
-	<lm-sticky-header :links="links">
-		<li class="user-auth">
-			<p
-				v-if="!isLoggedIn"
-				@click="isLoggedIn ? '' : $router.push({path:'login', query: {...$route.query}})"
-			>{{ $t('navigation.login') }}</p>
-			<p v-else>
-				<img
-					class="user-auth__avatar"
-					:src="hasAvatar ? `https://luminu.net/data/avatars/m/0/${userId}.jpg` : 'https://luminu.net/img/noAvatar.png'"
-					alt
-				/>
-				<span class="user-auth__name">{{ username }}</span>
-			</p>
-		</li>
-	</lm-sticky-header>
+	<lm-sticky-header
+		:links="links"
+		:isLoggedIn="isLoggedIn"
+		:username="username"
+		:userId="userId"
+		:hasAvatar="hasAvatar"
+		:notLoggedInAction="{action: () => $router.push({path: '/login', query: {...$route.query}})}"
+		:dropdownItems="[
+			{
+				name: 'preferences',
+				action: () => {
+					openExternalLink('https://luminu.net/account/preferences')
+				}
+			},
+			{
+				name: 'logout',
+				fn,
+				action: () => {
+					removeItem('access_token');
+					this[fn]();
+				}
+			}
+		]"
+	/>
 </template>
 
 <style lang="scss" scoped>
@@ -36,6 +44,7 @@ import { LmStickyHeader } from "@luminu/components";
 import { CHECK_LOGGED_IN } from "../../store/actions.type";
 import { mapActions } from "vuex";
 import { SET_LOGGED_IN_STATUS } from "../../store/mutations.type";
+import { removeItem } from "../../common/localStorage.service";
 
 export default Vue.extend({
 	name: "LmCustomStickyHeader",
@@ -43,7 +52,11 @@ export default Vue.extend({
 		LmStickyHeader
 	},
 	methods: {
-		...mapActions([CHECK_LOGGED_IN])
+		...mapActions([CHECK_LOGGED_IN]),
+		removeItem,
+		openExternalLink(link: string) {
+			window.open(link, "_blank");
+		}
 	},
 	created() {
 		this.$store.subscribe((mutation, state) => {
@@ -78,7 +91,8 @@ export default Vue.extend({
 				isExternal: true,
 				hasChildren: false
 			}
-		]
+		],
+		fn: CHECK_LOGGED_IN
 	})
 });
 </script>
