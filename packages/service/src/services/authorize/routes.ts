@@ -2,6 +2,7 @@
 import authorize from './authorize';
 import information from './information';
 import authenticateUser from './login';
+import { addService } from './service';
 
 // types import
 import { Request, Response, NextFunction } from 'express';
@@ -18,7 +19,8 @@ import {
 } from '../../middleware/checks/authorize/authorizeChecks';
 import {
 	verifyClientId,
-	verifyScope
+	verifyScope,
+	checkApiKey
 } from '../../middleware/checks/authorize/globalChecks';
 import { checkExistsInformationQueries } from '../../middleware/checks/authorize/informationChecks';
 import {
@@ -83,6 +85,22 @@ export default [
 					res.locals.user.userId,
 					res.locals.user.username,
 					res.locals.user.hasAvatar
+				);
+				res.status(200).send(result);
+			}
+		]
+	},
+	{
+		path: '/api/v1/services',
+		method: 'post',
+		handler: [
+			checkApiKey,
+			async (req: Request, res: Response) => {
+				const result = await addService(
+					req.body.client_id,
+					req.body.name,
+					req.body.domain,
+					req.body.callback
 				);
 				res.status(200).send(result);
 			}
