@@ -7,7 +7,15 @@
 				<lm-seperator :mbottom="10" />
 				<label for="user">{{ $t('login.username') }} / {{ $t('login.email') }}</label>
 				<br />
-				<input maxlength="64" @keydown.enter="login" v-model="user" type="text" name="user" id="user" />
+				<input
+					autofocus
+					maxlength="64"
+					@keydown.enter="login"
+					v-model="user"
+					type="text"
+					name="user"
+					id="user"
+				/>
 				<br />
 				<label for="password">{{ $t('login.password') }}</label>
 				<br />

@@ -4,7 +4,9 @@ const en = {
 	navigation: {
 		home: 'Home',
 		forum: 'Forum',
-		login: 'Login'
+		login: 'Login',
+		logout: 'Logout',
+		preferences: 'Preferences'
 	},
 	global: {
 		buildingWebsite: 'Building website'

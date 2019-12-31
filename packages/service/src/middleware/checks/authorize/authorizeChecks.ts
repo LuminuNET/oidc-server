@@ -1,10 +1,15 @@
 import { Request, Response, NextFunction } from 'express';
 import {
-	getServiceByClientId,
-	getUserGrantsFromUser
+	getUserGrantsFromUser,
+	getGroupInformationFromUser
 } from '../../configuration';
 import { HTTP400Error } from '../../../utils/httpErrors';
 import LooseObject from '../../../types/LooseObject';
+import jwt from 'jsonwebtoken';
+import dotenv from 'dotenv';
+import { forumPool } from '../../database';
+
+dotenv.config();
 
 export const checkExistsOidcQueries = (
 	{ query }: Request,
@@ -58,8 +63,7 @@ export const verifyPrompt = async (
 	res: Response,
 	next: NextFunction
 ) => {
-	//! Setting the user id hardcoded. Replace with res.locals later
-	const userId = 4;
+	const userId = res.locals.user.userId;
 
 	const userGrants: LooseObject = await getUserGrantsFromUser(userId);
 
@@ -73,6 +77,76 @@ export const verifyPrompt = async (
 			throw new HTTP400Error('requestingUnallowedScopes');
 		}
 	}
+
+	next();
+};
+
+export const verifyAccessToken = (
+	req: Request,
+	res: Response,
+	next: NextFunction
+) => {
+	const accessToken = req.headers.authorization?.split(' ')[1];
+	let response: any;
+
+	try {
+		response = jwt.verify(
+			accessToken as string,
+			process.env.PRIVATE_KEY as string,
+			{
+				algorithms: ['HS256']
+			}
+		);
+	} catch (e) {
+		response = e;
+	}
+
+	// Only exists on type JsonWebTokenError
+	if (response.stack) {
+		throw new HTTP400Error('invalidBearerToken');
+	}
+
+	res.locals.user = {
+		userId: response.userId
+	};
+
+	next();
+};
+
+export const getProfileInformation = async (
+	req: Request,
+	res: Response,
+	next: NextFunction
+) => {
+	const userInformation: any = await forumPool.query(
+		`SELECT * FROM xf_user WHERE \`user_id\`=${forumPool.escape(
+			res.locals.user.userId
+		)}`
+	);
+
+	const group = getGroupInformationFromUser(userInformation[0].user_group_id);
+
+	res.locals.user = {
+		...res.locals.user,
+		username: userInformation[0].username,
+		hasAvatar: userInformation[0].avatar_date ? true : false,
+		profile: {
+			userGroupId: userInformation[0].user_group_id,
+			userGroupTitle: group?.title,
+			userGroupPriority: group?.display_style_priority,
+			messageCount: userInformation[0].message_count,
+			registerDate: userInformation[0].register_date,
+			lastActivity: userInformation[0].last_activity,
+			userState: userInformation[0].user_state,
+			isVisible: userInformation[0].visible ? true : false,
+			isStaff: userInformation[0].is_staff ? true : false,
+			isAdmin: userInformation[0].is_admin ? true : false,
+			isBanned: userInformation[0].is_banned ? true : false
+		},
+		email: {
+			email: userInformation[0].email
+		}
+	};
 
 	next();
 };
