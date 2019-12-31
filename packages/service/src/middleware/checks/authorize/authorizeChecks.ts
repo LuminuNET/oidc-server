@@ -1,7 +1,8 @@
 import { Request, Response, NextFunction } from 'express';
 import {
 	getUserGrantsFromUser,
-	getGroupInformationFromUser
+	getGroupInformationFromUser,
+	getServiceByClientId
 } from '../../configuration';
 import { HTTP400Error } from '../../../utils/httpErrors';
 import LooseObject from '../../../types/LooseObject';
@@ -78,6 +79,18 @@ export const verifyPrompt = async (
 		}
 	}
 
+	next();
+};
+
+export const verifyRedirectUri = (
+	req: Request,
+	res: Response,
+	next: NextFunction
+) => {
+	const service = getServiceByClientId(req.query.client_id);
+	if (req.query.redirect_uri !== service?.callback_url) {
+		throw new HTTP400Error('redirectUriDoesntMatch');
+	}
 	next();
 };
 

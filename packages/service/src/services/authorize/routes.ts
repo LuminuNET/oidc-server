@@ -20,7 +20,8 @@ import {
 	verifyOidcQueries,
 	verifyPrompt,
 	verifyAccessToken,
-	getProfileInformation
+	getProfileInformation,
+	verifyRedirectUri
 } from '../../middleware/checks/authorize/authorizeChecks';
 import {
 	verifyClientId,
@@ -43,6 +44,7 @@ export default [
 		handler: [
 			verifyAccessToken,
 			checkExistsOidcQueries,
+			verifyRedirectUri,
 			verifyClientId,
 			verifyScope,
 			verifyOidcQueries,
