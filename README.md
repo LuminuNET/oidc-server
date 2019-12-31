@@ -5,6 +5,10 @@
 This is the Luminu OIDC Service, it currently only supports the Implicit Flow, according to [https://openid.net/specs/openid-connect-core-1_0.html#ImplicitFlowAuth](https://openid.net/specs/openid-connect-core-1_0.html#ImplicitFlowAuth).
 Implementation notes will most likely follow in the @luminu/core or @luminu/components repository.
 
+## Side note
+
+* requires NodeJS >= 11.6.0
+
 ## Setup
 
 ### Development

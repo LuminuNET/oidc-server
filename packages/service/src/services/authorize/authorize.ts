@@ -17,7 +17,7 @@ const signToken = (payload: object, privateKey: string) => {
 		},
 		privateKey,
 		{
-			algorithm: 'HS256',
+			algorithm: 'RS256',
 			expiresIn: 600,
 			issuer: 'https://auth.luminu.net'
 		}

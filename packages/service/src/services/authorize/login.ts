@@ -12,7 +12,7 @@ export default (
 		{ userId, username, hasAvatar },
 		process.env.PRIVATE_KEY + '',
 		{
-			algorithm: 'HS256',
+			algorithm: 'RS256',
 			expiresIn: 3600 * 24 * 356,
 			issuer: 'https://auth.luminu.net'
 		}

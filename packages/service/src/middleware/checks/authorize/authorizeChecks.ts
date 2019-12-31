@@ -92,9 +92,9 @@ export const verifyAccessToken = (
 	try {
 		response = jwt.verify(
 			accessToken as string,
-			process.env.PRIVATE_KEY as string,
+			process.env.PUBLIC_KEY as string,
 			{
-				algorithms: ['HS256']
+				algorithms: ['RS256']
 			}
 		);
 	} catch (e) {

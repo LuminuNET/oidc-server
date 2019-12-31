@@ -1,7 +1,10 @@
 import { Request, Response, NextFunction } from 'express';
 import TService from '../../../types/ServiceType';
 import { getServiceByClientId } from '../../configuration';
-import { HTTP400Error } from '../../../utils/httpErrors';
+import { HTTP400Error, HTTP401Error } from '../../../utils/httpErrors';
+import dotenv from 'dotenv';
+
+dotenv.config();
 
 export const verifyClientId = (
 	{ query }: Request,
@@ -36,6 +39,20 @@ export const verifyScope = (
 	}
 
 	res.locals.scopes = scopes;
+
+	next();
+};
+
+export const checkApiKey = (
+	req: Request,
+	res: Response,
+	next: NextFunction
+) => {
+	const apiKey = req.headers.authorization?.split(' ')[1];
+
+	if (apiKey !== process.env.API_KEY) {
+		throw new HTTP401Error('Unauthorized');
+	}
 
 	next();
 };
