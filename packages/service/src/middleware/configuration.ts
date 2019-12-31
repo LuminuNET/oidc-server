@@ -144,25 +144,17 @@ const formatGroups = (groups: TGroup[]): TGroup[] => {
 };
 
 const loadGroups = async () => {
-	const redisGroups = await getValue('groups');
-
-	if (redisGroups === null) {
-		forumPool.query(
-			'SELECT * FROM xf_user_group',
-			(error: MysqlError, result: TGroup[]) => {
-				if (error) {
-					console.error(
-						'Unexpected error on getting groups ' + error
-					);
-				}
-
-				groups = formatGroups(result);
-				setValue('groups', JSON.stringify(groups));
+	forumPool.query(
+		'SELECT * FROM xf_user_group',
+		(error: MysqlError, result: TGroup[]) => {
+			if (error) {
+				console.error('Unexpected error on getting groups ' + error);
 			}
-		);
-	} else {
-		groups = JSON.parse(redisGroups);
-	}
+
+			groups = formatGroups(result);
+			setValue('groups', JSON.stringify(groups));
+		}
+	);
 };
 
 const loadServices = async () => {
@@ -188,4 +180,17 @@ export const getClaims = (): any => {
 	return claims;
 };
 
-export { getServiceByClientId, setUserGrantsForUser, getUserGrantsFromUser };
+export const getGroups = (): any => {
+	return groups;
+};
+
+export const getServices = (): TService[] => {
+	return services;
+};
+
+export {
+	getServiceByClientId,
+	setUserGrantsForUser,
+	getUserGrantsFromUser,
+	loadServices
+};

@@ -2,7 +2,12 @@
 import authorize from './authorize';
 import information from './information';
 import authenticateUser from './login';
-import { addService } from './service';
+import {
+	addService,
+	updateService,
+	getServices,
+	deleteService
+} from './service';
 
 // types import
 import { Request, Response, NextFunction } from 'express';
@@ -29,6 +34,7 @@ import {
 	checkPassword,
 	checkAmountLoginAttempts
 } from '../../middleware/checks/authorize/loginChecks';
+import { getGroups } from './groups';
 
 export default [
 	{
@@ -102,6 +108,54 @@ export default [
 					req.body.domain,
 					req.body.callback
 				);
+				res.status(200).send(result);
+			}
+		]
+	},
+	{
+		path: '/api/v1/services',
+		method: 'put',
+		handler: [
+			checkApiKey,
+			async (req: Request, res: Response) => {
+				const result = await updateService(
+					req.body.client_id,
+					req.body.name,
+					req.body.domain,
+					req.body.callback
+				);
+				res.status(200).send(result);
+			}
+		]
+	},
+	{
+		path: '/api/v1/services',
+		method: 'get',
+		handler: [
+			checkApiKey,
+			async (req: Request, res: Response) => {
+				const result = await getServices();
+				res.status(200).send(result);
+			}
+		]
+	},
+	{
+		path: '/api/v1/services',
+		method: 'delete',
+		handler: [
+			checkApiKey,
+			async (req: Request, res: Response) => {
+				const result = await deleteService(req.body.client_id);
+				res.status(200).send(result);
+			}
+		]
+	},
+	{
+		path: '/api/v1/groups',
+		method: 'get',
+		handler: [
+			async (req: Request, res: Response) => {
+				const result = await getGroups();
 				res.status(200).send(result);
 			}
 		]
