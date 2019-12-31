@@ -1,5 +1,5 @@
 import TService from '../types/ServiceType';
-import { getValue, setValue, delValue } from './redis';
+import { getValue, setValue } from './redis';
 import { webPool, forumPool } from './database';
 import { MysqlError } from 'mysql';
 import TGroup from '../types/GroupType';
@@ -9,7 +9,7 @@ let services: Array<TService>;
 let groups: any;
 
 const loadClaims = async () => {
-	claims = await import('../config/claims.json' as 'json');
+	claims = await import('../../claims.json' as 'json');
 };
 
 const getServiceByClientId = (clientId: string): TService | null => {
