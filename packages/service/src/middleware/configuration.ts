@@ -166,25 +166,16 @@ const loadGroups = async () => {
 };
 
 const loadServices = async () => {
-	const redisServices = await getValue('services');
-
-	if (redisServices === null) {
-		webPool.query(
-			'SELECT * FROM oidc_services',
-			(error: MysqlError, result: TService[]) => {
-				if (error) {
-					console.error(
-						'Unexpected error on loading services ' + error
-					);
-				}
-
-				services = result;
-				setValue('services', JSON.stringify(result));
+	webPool.query(
+		'SELECT * FROM oidc_services',
+		(error: MysqlError, result: TService[]) => {
+			if (error) {
+				console.error('Unexpected error on loading services ' + error);
 			}
-		);
-	} else {
-		services = JSON.parse(redisServices);
-	}
+
+			services = result;
+		}
+	);
 };
 
 export const loadConfiguration = () => {
