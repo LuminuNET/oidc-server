@@ -1,6 +1,5 @@
 import TInformationResponse from '../../types/InformationResponseType';
 import {
-	getServices,
 	getClaims,
 	getServiceByClientId
 } from '../../middleware/configuration';
@@ -10,7 +9,6 @@ export default async (
 	clientId: string,
 	scope: string
 ): Promise<TInformationResponse> => {
-	const services = await getServices();
 	const claims = await getClaims();
 
 	// @ts-ignore

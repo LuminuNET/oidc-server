@@ -1,5 +1,5 @@
 import TService from '../types/ServiceType';
-import { getValue, setValue } from './redis';
+import { getValue, setValue, delValue } from './redis';
 import { webPool, forumPool } from './database';
 import { MysqlError } from 'mysql';
 import TGroup from '../types/GroupType';
@@ -157,6 +157,7 @@ const loadGroups = async () => {
 				}
 
 				groups = formatGroups(result);
+				setValue('groups', JSON.stringify(groups));
 			}
 		);
 	} else {
@@ -178,7 +179,7 @@ const loadServices = async () => {
 				}
 
 				services = result;
-				setValue('services', result);
+				setValue('services', JSON.stringify(result));
 			}
 		);
 	} else {
@@ -186,22 +187,14 @@ const loadServices = async () => {
 	}
 };
 
-const loadConfiguration = () => {
+export const loadConfiguration = () => {
 	loadClaims();
-	loadServices();
 	loadGroups();
+	loadServices();
 };
 
-loadConfiguration();
-
-export const getClaims = async (): Promise<any> => {
-	if (!claims) await loadClaims();
+export const getClaims = (): any => {
 	return claims;
-};
-
-export const getServices = async (): Promise<TService[]> => {
-	if (!services) await loadServices();
-	return services;
 };
 
 export { getServiceByClientId, setUserGrantsForUser, getUserGrantsFromUser };
