@@ -26,7 +26,7 @@ export const getServices = async () => {
 		client_id: element.client_id,
 		name: element.name,
 		domain: element.domain,
-		callback: element.callback_url,
+		callback: element.callback,
 		public_key: element.public_key
 	}));
 

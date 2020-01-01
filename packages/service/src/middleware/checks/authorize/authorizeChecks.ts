@@ -88,7 +88,7 @@ export const verifyRedirectUri = (
 	next: NextFunction
 ) => {
 	const service = getServiceByClientId(req.query.client_id);
-	if (req.query.redirect_uri !== service?.callback_url) {
+	if (req.query.redirect_uri !== service?.callback) {
 		throw new HTTP400Error('redirectUriDoesntMatch');
 	}
 	next();
