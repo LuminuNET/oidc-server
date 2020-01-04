@@ -19,8 +19,8 @@ export const checkAmountLoginAttempts = async (
 ) => {
 	const failedLoginAttempts = await getValue('login', req.ip);
 
-	// if (parseInt(failedLoginAttempts + '') >= 5)
-	// 	throw new HTTP400Error('tooManyFailedLoginAttempts');
+	if (parseInt(failedLoginAttempts + '') >= 5)
+		throw new HTTP400Error('tooManyFailedLoginAttempts');
 
 	next();
 };
