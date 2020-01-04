@@ -1,7 +1,7 @@
 <template>
 	<lm-sticky-header
 		:links="links"
-		:isLoggedIn="isLoggedIn"
+		:type="isLoggedIn ? 'loggedIn' : 'defaultLogin'"
 		:username="username"
 		:userId="userId"
 		:hasAvatar="hasAvatar"
