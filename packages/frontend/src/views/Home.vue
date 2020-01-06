@@ -49,10 +49,10 @@ import {
 import { mapGetters, mapActions } from "vuex";
 import { GET_OIDC, GET_PROMPT } from "../store/getters.type";
 import { TOidcInput } from "@luminu/types";
-import { api } from "../plugins/neocajax";
+import { api } from "../plugins/neojax";
 import { REGISTER_LOADING, FINISHED_LOADING } from "../store/actions.type";
 import { getItem } from "../common/localStorage.service";
-import { NeoCajaxError, NeoCajaxResponse } from "neocajax";
+import { NeojaxError, NeojaxResponse } from "neojax";
 
 export default Vue.extend({
 	name: "home",
@@ -140,7 +140,7 @@ export default Vue.extend({
 						Authorization: "Bearer " + getItem("access_token")
 					}
 				}
-			).catch((error: NeoCajaxError) => {
+			).catch((error: NeojaxError) => {
 				if (error.response) {
 					const statusCode = error.response.status;
 
@@ -163,14 +163,14 @@ export default Vue.extend({
 				api.get(
 					`/information?client_id=${oidc.clientId}&scope=${oidc.scope}`
 				)
-					.then((response: NeoCajaxResponse) => {
+					.then((response: NeojaxResponse) => {
 						this.permissions.basic = response.data.permission_basic;
 						this.permissions.advanced =
 							response.data.permission_advanced;
 
 						this.name = response.data.name;
 					})
-					.catch((error: NeoCajaxError) => {
+					.catch((error: NeojaxError) => {
 						if (error.response) {
 							this.sendNotification(error.response.data.message);
 						} else {

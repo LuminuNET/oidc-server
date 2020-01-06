@@ -1,7 +1,7 @@
-import neocajax from 'neocajax';
+import neojax from 'neojax';
 import Vue from 'vue';
 
-const api = neocajax.create({
+const api = neojax.create({
 	baseUrl: 'http://localhost:3000/api/v1'
 });
 
