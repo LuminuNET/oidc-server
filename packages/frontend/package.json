@@ -16,7 +16,7 @@
 		"@types/jsonwebtoken": "^8.3.5",
 		"core-js": "^3.4.3",
 		"jsonwebtoken": "^8.5.1",
-		"neojax": "^2.1.2",
+		"neojax": "^2.1.6",
 		"vue": "^2.6.10",
 		"vue-class-component": "^7.0.2",
 		"vue-i18n": "^8.15.1",
