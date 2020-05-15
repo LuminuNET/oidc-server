@@ -53,11 +53,11 @@ import {
 	LmSeperator,
 	LmNotification
 } from "@luminu/components";
-import { api } from "../plugins/axios";
-import { AxiosResponse, AxiosError } from "axios";
+import { api } from "../plugins/neojax";
 import { mapActions } from "vuex";
 import { FINISHED_LOADING, CHECK_LOGGED_IN } from "../store/actions.type";
 import { setItem } from "../common/localStorage.service";
+import { NeojaxResponse, NeojaxError } from "neojax";
 
 export default Vue.extend({
 	name: "login",
@@ -95,7 +95,7 @@ export default Vue.extend({
 				user: this.user,
 				password: this.password
 			})
-				.then((response: AxiosResponse) => {
+				.then((response: NeojaxResponse) => {
 					setItem("access_token", response.data.accessToken);
 					this.sendNotification(response.data.message);
 					this[CHECK_LOGGED_IN]();
@@ -104,12 +104,10 @@ export default Vue.extend({
 						query: { ...this.$route.query }
 					});
 				})
-				.catch((error: AxiosError) => {
-					if (error.response) {
-						this.sendNotification(error.response.data.message);
-						// @ts-ignore
-						this.$refs.password.value = "";
-					}
+				.catch((error: NeojaxError) => {
+					this.sendNotification(error.response.data.message);
+					// @ts-ignore
+					this.$refs.password.value = "";
 				});
 		},
 		sendNotification(message: string) {

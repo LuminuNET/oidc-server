@@ -4,10 +4,10 @@ import dotenv from 'dotenv';
 dotenv.config();
 
 const redis = new Redis(
-	parseInt(process.env.REDIS_PORT as string),
+	+(process.env.REDIS_PORT as string),
 	process.env.REDIS_IP,
 	{
-		connectTimeout: parseInt(process.env.REDIS_CONNECTION_TIMEOUT as string)
+		connectTimeout: +(process.env.REDIS_CONNECTION_TIMEOUT as string)
 	}
 );
 
