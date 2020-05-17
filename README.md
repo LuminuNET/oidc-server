@@ -1,4 +1,4 @@
-# OICD Service
+# OIDC Service
 
 ## Description
 
